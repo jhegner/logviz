@@ -1,0 +1,87 @@
+{
+   "idJornada":"J12347",
+   "idEtapa":"11223344-5566-7788-99aa-bbccddeeff00",
+   "nomeEtapa":"Oferta",
+   "siglaServico":"SOA",
+   "nomeIntegracao":"Consulta de Preço",
+   "url":"https://api.exemplo.com/preco",
+   "method":"GET",
+   "statusCode":200,
+   "headers":{
+      "authorization":"Bearer preco_api_token",
+      "accept":"application/json"
+   },
+   "request_body":null,
+   "request_query":{
+      "produto":"ProdutoZ",
+      "regiao":"sul"
+   },
+   "response_body":{
+      "preco":89.90,
+      "moeda":"BRL"
+   }
+}{
+   "idJornada":"J12347",
+   "idEtapa":"11223344-5566-7788-99aa-bbccddeeff00",
+   "nomeEtapa":"Oferta",
+   "siglaServico":"SOA",
+   "nomeIntegracao":"Sincronização de Estoque",
+   "url":"https://erp.exemplo.com/estoque/sync",
+   "method":"PUT",
+   "statusCode":204,
+   "headers":{
+      "authorization":"Bearer estoque_api_token",
+      "content_type":"application/json"
+   },
+   "request_body":{
+      "produto":"ProdutoZ",
+      "quantidade":50
+   },
+   "request_query":null,
+   "response_body":null
+}{
+   "idJornada":"J12347",
+   "idEtapa":"22334455-6677-8899-aabb-ccddeeff0011",
+   "nomeEtapa":"Simulacao",
+   "siglaServico":"SSM",
+   "nomeIntegracao":"Simulacao Financiamento",
+   "url":"https://financiamento.exemplo.com/simular",
+   "method":"POST",
+   "statusCode":201,
+   "headers":{
+      "content_type":"application/json",
+      "x_request_id":"sim-7721"
+   },
+   "request_body":{
+      "produto":"ProdutoZ",
+      "valorSolicitado":900,
+      "prazo":12
+   },
+   "request_query":null,
+   "response_body":{
+      "valorParcela":82.10,
+      "taxaJuros":2.10
+   }
+}{
+   "idJornada":"J12347",
+   "idEtapa":"33445566-7788-99aa-bbcc-ddeeff001122",
+   "nomeEtapa":"Efetivacao",
+   "siglaServico":"SEF",
+   "nomeIntegracao":"Confirmacao de Pagamento",
+   "url":"https://pagamento.exemplo.com/confirm",
+   "method":"POST",
+   "statusCode":200,
+   "headers":{
+      "content_type":"application/json",
+      "x_request_id":"pag-5500"
+   },
+   "request_body":{
+      "contrato":"CT-901",
+      "valor":900
+   },
+   "request_query":null,
+   "response_body":{
+      "status":"CONFIRMADO",
+      "autorizacao":"AUTH-1122"
+   }
+}

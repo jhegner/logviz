@@ -1,0 +1,274 @@
+{
+    "idJornada": "J12345",
+    "idEtapa": "550e8400-e29b-41d4-a716-446655440000",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Consulta de Preço",
+    "url": "https://api.exemplo.com/preco",
+    "method": "GET",
+    "statusCode": 200,
+    "headers": {
+        "authorization": "Bearer preco_token",
+        "accept": "application/json"
+    },
+    "request_body": null,
+    "request_query": {
+        "produto": "ProdutoX",
+        "regiao": "sudeste"
+    },
+    "response_body": {
+        "preco": 149.90,
+        "moeda": "BRL"
+    }
+}
+{
+    "idJornada": "J12345",
+    "idEtapa": "550e8400-e29b-41d4-a716-446655440000",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Validação de CPF",
+    "url": "https://api.exemplo.com/cpf/valida",
+    "method": "POST",
+    "statusCode": 202,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "req-7890"
+    },
+    "request_body": {
+        "cpf": "12345678909",
+        "nome": "João da Silva"
+    },
+    "request_query": null,
+    "response_body": {
+        "status": "PENDENTE",
+        "detalhes": "Consulta enviada para fila"
+    }
+}
+{
+    "idJornada": "J12345",
+    "idEtapa": "550e8400-e29b-41d4-a716-446655440000",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Sincronização de Estoque",
+    "url": "https://erp.exemplo.com/estoque/sync",
+    "method": "PUT",
+    "statusCode": 204,
+    "headers": {
+        "authorization": "Bearer estoque_token",
+        "content_type": "application/json"
+    },
+    "request_body": {
+        "produto": "ProdutoX",
+        "quantidade": 120
+    },
+    "request_query": null,
+    "response_body": null
+}
+{
+    "idJornada": "J12345",
+    "data": "2024-06-15",
+    "idEtapa": "d9f8c7b1-4a6e-4e1b-b3c9-2ac820b7f123",
+    "nomeEtapa": "Simulacao",
+    "siglaServico": "SSM",
+    "nomeIntegracao": "Simulacao Financiamento",
+    "url": "https://financiamento.exemplo.com/simular",
+    "method": "POST",
+    "statusCode": 201,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "sim-5671"
+    },
+    "request_body": {
+        "produto": "ProdutoX",
+        "valorSolicitado": 5000,
+        "prazo": 36
+    },
+    "request_query": null,
+    "response_body": {
+        "valorParcela": 184.25,
+        "taxaJuros": 1.85
+    }
+}
+{
+    "idJornada": "J12345",
+    "idEtapa": "a3b4c5d6-e7f8-9012-3456-7890fedcba98",
+    "nomeEtapa": "Resumo",
+    "siglaServico": "SRES",
+    "nomeIntegracao": "Resumo de Documentos",
+    "url": "https://docmanager.exemplo.com/resumo",
+    "method": "GET",
+    "statusCode": 200,
+    "headers": {
+        "accept": "application/json",
+        "x_correlation_id": "resumo-1122"
+    },
+    "request_body": null,
+    "request_query": {
+        "cliente": "123456",
+        "periodo": "2024-06"
+    },
+    "response_body": {
+        "documentos": 7,
+        "pendencias": 0
+    }
+}
+{
+    "idJornada": "J12345",
+    "idEtapa": "f0e1d2c3-b4a5-6789-0123-456789abcdef",
+    "nomeEtapa": "Efetivacao",
+    "siglaServico": "SEF",
+    "nomeIntegracao": "Confirmacao de Pagamento",
+    "url": "https://pagamento.exemplo.com/confirm",
+    "method": "POST",
+    "statusCode": 200,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "pag-3344"
+    },
+    "request_body": {
+        "contrato": "CT-456",
+        "valor": 5120
+    },
+    "request_query": null,
+    "response_body": {
+        "status": "CONFIRMADO",
+        "autorizacao": "AUTH-9988"
+    }
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "660e9511-f39c-52e5-b827-557766551111",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Consulta de Preço",
+    "url": "https://api.exemplo.com/preco",
+    "method": "GET",
+    "statusCode": 200,
+    "headers": {
+        "authorization": "Bearer preco_mobile_token",
+        "accept": "application/json"
+    },
+    "request_body": null,
+    "request_query": {
+        "produto": "ProdutoY",
+        "regiao": "nordeste"
+    },
+    "response_body": {
+        "preco": 299.90,
+        "moeda": "BRL"
+    }
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "660e9511-f39c-52e5-b827-557766551111",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Validação de CPF",
+    "url": "https://api.exemplo.com/cpf/valida",
+    "method": "POST",
+    "statusCode": 200,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "req-4421"
+    },
+    "request_body": {
+        "cpf": "98765432100",
+        "nome": "Maria Oliveira"
+    },
+    "request_query": null,
+    "response_body": {
+        "status": "APROVADO",
+        "detalhes": "CPF válido e regular"
+    }
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "660e9511-f39c-52e5-b827-557766551111",
+    "nomeEtapa": "Oferta",
+    "siglaServico": "SOA",
+    "nomeIntegracao": "Sincronização de Estoque",
+    "url": "https://erp.exemplo.com/estoque/sync",
+    "method": "PUT",
+    "statusCode": 204,
+    "headers": {
+        "authorization": "Bearer estoque_token",
+        "content_type": "application/json"
+    },
+    "request_body": {
+        "produto": "ProdutoY",
+        "quantidade": 45
+    },
+    "request_query": null,
+    "response_body": null
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "e8g9h0i1-5b7f-5f2c-c4da-3bd931c8g234",
+    "nomeEtapa": "Simulacao",
+    "siglaServico": "SSM",
+    "nomeIntegracao": "Simulacao Financiamento",
+    "url": "https://financiamento.exemplo.com/simular",
+    "method": "POST",
+    "statusCode": 201,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "sim-9934"
+    },
+    "request_body": {
+        "produto": "ProdutoY",
+        "valorSolicitado": 3000,
+        "prazo": 24
+    },
+    "request_query": null,
+    "response_body": {
+        "valorParcela": 138.50,
+        "taxaJuros": 1.65
+    }
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "b4c5d6e7-f8a9-0123-4567-89abcdef0123",
+    "nomeEtapa": "Resumo",
+    "siglaServico": "SRES",
+    "nomeIntegracao": "Resumo de Documentos",
+    "url": "https://docmanager.exemplo.com/resumo",
+    "method": "GET",
+    "statusCode": 200,
+    "headers": {
+        "accept": "application/json",
+        "x_correlation_id": "resumo-5566"
+    },
+    "request_body": null,
+    "request_query": {
+        "cliente": "654321",
+        "periodo": "2024-06"
+    },
+    "response_body": {
+        "documentos": 5,
+        "pendencias": 0
+    }
+}
+{
+    "idJornada": "J12346",
+    "idEtapa": "c5d6e7f8-a9b0-1234-5678-9abcdef01234",
+    "nomeEtapa": "Efetivacao",
+    "siglaServico": "SEF",
+    "nomeIntegracao": "Confirmacao de Pagamento",
+    "url": "https://pagamento.exemplo.com/confirm",
+    "method": "POST",
+    "statusCode": 500,
+    "headers": {
+        "content_type": "application/json",
+        "x_request_id": "pag-8877"
+    },
+    "request_body": {
+        "contrato": "CT-789",
+        "valor": 3324
+    },
+    "request_query": null,
+    "response_body": {
+        "status": "ERRO",
+        "mensagem": "Timeout na comunicação com gateway de pagamento",
+        "codigo_erro": "PGW-504"
+    }
+}

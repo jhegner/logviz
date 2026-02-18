@@ -1,0 +1,139 @@
+[
+  {
+    "Name": "idjornada",
+    "Type": "string"
+  },
+  {
+    "Name": "data",
+    "Type": "string"
+  },
+  {
+    "Name": "meta",
+    "Type": "struct<dataHoraInicio:string,dataHoraFim:string,version:string,idEvento:string,canal:string,produto:string,ambiente:string,resumo_ia:string>"
+  },
+  {
+    "Name": "etapas",
+    "Type": "array<struct<idEtapa:string,nome:string,dataHoraInicio:string,dataHoraFim:string,servicos:array<struct<nome:string,sigla:string,siglaApp:string,versaoApp:string,url:string,method:string,statusCode:int,header:struct<Authorization:string,Content-Type:string,Accept:string,x-Custom-Header:string,x-correlation-id:string>,httpRequest:struct<body:struct<param1:string,param2:string,cenario:string,valor:int,prazo:int,contrato:string,parcelas:int>,query:struct<transacaoId:string>>,httpResponse:struct<body:struct<responseParam1:string,responseParam2:string,risco:string,score:int,total:int,itens:int,status:string,previsao:string>>,integracoes:array<struct<nome:string,url:string,method:string,statusCode:int,header:struct<Authorization:string,Accept:string,Content-Type:string,x-Request-Id:string,x-Correlation-Id:string>,httpRequest:struct<query:struct<produto:string,regiao:string,cliente:string,periodo:string>,body:struct<cpf:string,nome:string,produto:string,quantidade:int,valorSolicitado:int,prazo:int,contrato:string,valor:int>>,httpResponse:struct<body:struct<preco:double,moeda:string,status:string,detalhes:string,valorParcela:double,taxaJuros:double,documentos:int,pendencias:int,autorizacao:string>>>>>>>>"
+  }
+]
+
+######
+
+Schema datatype - meta
+
+{
+  "meta": {
+    "dataHoraInicio": "string",
+    "dataHoraFim": "string",
+    "version": "string",
+    "idEvento": "string",
+    "canal": "string",
+    "produto": "string",
+    "ambiente": "string",
+    "resumo_ia": "string"
+  }
+}
+
+Schema datatype - etapas
+
+{
+  "etapas": [
+    {
+      "idEtapa": "string",
+      "nome": "string",
+      "dataHoraInicio": "string",
+      "dataHoraFim": "string",
+      "servicos": [
+        {
+          "nome": "string",
+          "sigla": "string",
+          "siglaApp": "string",
+          "versaoApp": "string",
+          "url": "string",
+          "method": "string",
+          "statusCode": "int",
+          "header": {
+            "Authorization": "string",
+            "Content-Type": "string",
+            "Accept": "string",
+            "x-Custom-Header": "string",
+            "x-correlation-id": "string"
+          },
+          "httpRequest": {
+            "body": {
+              "param1": "string",
+              "param2": "string",
+              "cenario": "string",
+              "valor": "int",
+              "prazo": "int",
+              "contrato": "string",
+              "parcelas": "int"
+            },
+            "query": {
+              "transacaoId": "string"
+            }
+          },
+          "httpResponse": {
+            "body": {
+              "responseParam1": "string",
+              "responseParam2": "string",
+              "risco": "string",
+              "score": "int",
+              "total": "int",
+              "itens": "int",
+              "status": "string",
+              "previsao": "string"
+            }
+          },
+          "integracoes": [
+            {
+              "nome": "string",
+              "url": "string",
+              "method": "string",
+              "statusCode": "int",
+              "header": {
+                "Authorization": "string",
+                "Accept": "string",
+                "Content-Type": "string",
+                "x-Request-Id": "string",
+                "x-Correlation-Id": "string"
+              },
+              "httpRequest": {
+                "query": {
+                  "produto": "string",
+                  "regiao": "string",
+                  "cliente": "string",
+                  "periodo": "string"
+                },
+                "body": {
+                  "cpf": "string",
+                  "nome": "string",
+                  "produto": "string",
+                  "quantidade": "int",
+                  "valorSolicitado": "int",
+                  "prazo": "int",
+                  "contrato": "string",
+                  "valor": "int"
+                }
+              },
+              "httpResponse": {
+                "body": {
+                  "preco": "double",
+                  "moeda": "string",
+                  "status": "string",
+                  "detalhes": "string",
+                  "valorParcela": "double",
+                  "taxaJuros": "double",
+                  "documentos": "int",
+                  "pendencias": "int",
+                  "autorizacao": "string"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
