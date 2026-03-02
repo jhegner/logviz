@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  logviz:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - S3_BUCKET=${S3_BUCKET:-bucket-logs-eventos}
+      - S3_PREFIX=${S3_PREFIX:-jornadas/detail}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_PROFILE=${AWS_PROFILE:-default}
+    # Mount AWS credentials for local development
+    volumes:
+      - ${HOME}/.aws:/root/.aws:ro
+    restart: unless-stopped
