@@ -1,0 +1,88 @@
+{
+    "_proposta": "2 — Meta + Detail Pattern",
+    "_descricao": "Apenas o objeto meta é armazenado em formato NDJSON particionado por data para consultas no Athena. O JSON completo da jornada (etapas, serviços e integrações) é armazenado em um arquivo separado no S3, referenciado pelo campo s3_detail_path no registro meta.",
+    "_estrutura_s3": {
+        "meta": "s3://bucket-logs-eventos/jornadas/meta/data=YYYY-MM-DD/records.json  (NDJSON — crawleado pelo Glue)",
+        "detail": "s3://bucket-logs-eventos/jornadas/detail/data=YYYY-MM-DD/{idJornada}.json  (JSON completo — acesso via presigned URL)"
+    },
+    "meta_record": {
+        "idJornada": "J12345",
+        "data": "2024-06-15",
+        "dataHoraInicio": "2024-06-15T08:00:00",
+        "dataHoraFim": "2024-06-15T17:00:00",
+        "version": "1.0",
+        "idEvento": "20260615-001",
+        "canal": "Web",
+        "produto": "ProdutoX",
+        "idCliente": "550e8400-e29b-41d4-a716-446655440000",
+        "ambiente": "Prod",
+        "total_erros_servico": 0,
+        "total_erros_integracao": 0,
+        "resumo_ia": "...",
+        "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/data=2024-06-15/J12345.json"
+    },
+    "detail_file": {
+        "idJornada": "J12345",
+        "data": "2024-06-15",
+        "meta": {
+            "...": "campos iguais ao meta_record (sem s3_detail_path)"
+        },
+        "etapas": [
+            {
+                "idJornada": "J12345",
+                "idEtapa": "550e8400-...",
+                "nome": "Oferta",
+                "dataHoraInicio": "2024-06-15T08:00:00",
+                "dataHoraFim": "2024-06-15T10:00:00",
+                "servicos": [
+                    {
+                        "nome": "Serviço de Oferta",
+                        "sigla": "SOA",
+                        "siglaApp": "SOA_APP",
+                        "versaoApp": "2.1",
+                        "url": "https://api.exemplo.com/oferta",
+                        "method": "POST",
+                        "statusCode": 200,
+                        "header": {
+                            "...": "headers HTTP"
+                        },
+                        "httpRequest": {
+                            "body": {
+                                "...": "payload de entrada"
+                            }
+                        },
+                        "httpResponse": {
+                            "body": {
+                                "...": "payload de retorno"
+                            }
+                        },
+                        "integracoes": [
+                            {
+                                "nome": "Consulta de Preço",
+                                "url": "https://api.exemplo.com/preco",
+                                "method": "GET",
+                                "statusCode": 200,
+                                "header": {
+                                    "...": "headers HTTP"
+                                },
+                                "httpRequest": {
+                                    "query": {
+                                        "...": "query params"
+                                    }
+                                },
+                                "httpResponse": {
+                                    "body": {
+                                        "preco": 149.90,
+                                        "moeda": "BRL"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "_athena_query_exemplo": "SELECT idJornada, canal, produto, ambiente, dataHoraInicio, dataHoraFim, total_erros_integracao, s3_detail_path FROM jornadas_meta WHERE data = '2024-06-15' AND total_erros_integracao > 0",
+    "_presigned_url_exemplo": "aws s3 presign s3://bucket-logs-eventos/jornadas/detail/data=2024-06-15/J12345.json --expires-in 3600"
+}

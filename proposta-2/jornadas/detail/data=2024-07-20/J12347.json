@@ -1,0 +1,217 @@
+{
+    "idJornada": "J12347",
+    "data": "2024-07-20",
+    "meta": {
+        "dataHoraInicio": "2024-07-20T14:00:00",
+        "dataHoraFim": "2024-07-20T18:00:00",
+        "version": "1.2",
+        "idEvento": "20260720-001",
+        "canal": "API",
+        "produto": "ProdutoZ",
+        "idCliente": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+        "ambiente": "Staging",
+        "resumo_ia": "Teste de integração do ProdutoZ em ambiente Staging com 3 etapas. OFERTA (14:00-15:00): Preço R$89,90, estoque sincronizado 50un (PUT 204). SIMULAÇÃO (15:00-16:00): Financiamento 12x R$82,10 aprovado (taxa 2,10%, score 650, risco médio). EFETIVAÇÃO (16:00-18:00): Contrato CT-901 confirmado, pagamento AUTH-1122 aprovado. Fluxo nominal sem erros."
+    },
+    "etapas": [
+        {
+            "idJornada": "J12347",
+            "idEtapa": "11223344-5566-7788-99aa-bbccddeeff00",
+            "nome": "Oferta",
+            "dataHoraInicio": "2024-07-20T14:00:00",
+            "dataHoraFim": "2024-07-20T15:00:00",
+            "servicos": [
+                {
+                    "nome": "Serviço de Oferta",
+                    "sigla": "SOA",
+                    "siglaApp": "SOA_APP",
+                    "versaoApp": "2.2",
+                    "url": "https://api.exemplo.com/oferta",
+                    "method": "POST",
+                    "statusCode": 200,
+                    "header": {
+                        "Authorization": "Bearer api_token_z01",
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "x-Api-Key": "key-produtoz-staging",
+                        "x-correlation-id": "f1e2d3c4-b5a6-7890-1234-56789abcdef0"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "param1": "produtoZ_offer",
+                            "param2": "va***Z"
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "responseParam1": "offerZAccepted",
+                            "preco": 89.90
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Consulta de Preço",
+                            "url": "https://api.exemplo.com/preco",
+                            "method": "GET",
+                            "statusCode": 200,
+                            "header": {
+                                "Authorization": "Bearer preco_api_token",
+                                "Accept": "application/json"
+                            },
+                            "httpRequest": {
+                                "query": {
+                                    "produto": "ProdutoZ",
+                                    "regiao": "sul"
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "preco": 89.90,
+                                    "moeda": "BRL"
+                                }
+                            }
+                        },
+                        {
+                            "nome": "Sincronização de Estoque",
+                            "url": "https://erp.exemplo.com/estoque/sync",
+                            "method": "PUT",
+                            "statusCode": 204,
+                            "header": {
+                                "Authorization": "Bearer estoque_api_token",
+                                "Content-Type": "application/json"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "produto": "ProdutoZ",
+                                    "quantidade": 50
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "idJornada": "J12347",
+            "idEtapa": "22334455-6677-8899-aabb-ccddeeff0011",
+            "nome": "Simulacao",
+            "dataHoraInicio": "2024-07-20T15:00:00",
+            "dataHoraFim": "2024-07-20T16:00:00",
+            "servicos": [
+                {
+                    "nome": "Servico de Simulacao",
+                    "sigla": "SSM",
+                    "siglaApp": "SIM_APP",
+                    "versaoApp": "1.4",
+                    "url": "https://api.exemplo.com/simulacao",
+                    "method": "POST",
+                    "statusCode": 200,
+                    "header": {
+                        "Authorization": "Bearer sim_api_z02",
+                        "Content-Type": "application/json"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "cenario": "basico",
+                            "valor": 900,
+                            "prazo": 12
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "risco": "medio",
+                            "score": 650
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Simulacao Financiamento",
+                            "url": "https://financiamento.exemplo.com/simular",
+                            "method": "POST",
+                            "statusCode": 201,
+                            "header": {
+                                "Content-Type": "application/json",
+                                "x-Request-Id": "sim-7721"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "produto": "ProdutoZ",
+                                    "valorSolicitado": 900,
+                                    "prazo": 12
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "valorParcela": 82.10,
+                                    "taxaJuros": 2.10
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "idJornada": "J12347",
+            "idEtapa": "33445566-7788-99aa-bbcc-ddeeff001122",
+            "nome": "Efetivacao",
+            "dataHoraInicio": "2024-07-20T16:00:00",
+            "dataHoraFim": "2024-07-20T18:00:00",
+            "servicos": [
+                {
+                    "nome": "Servico de Efetivacao",
+                    "sigla": "SEF",
+                    "siglaApp": "EFT_APP",
+                    "versaoApp": "3.1",
+                    "url": "https://api.exemplo.com/efetivacao",
+                    "method": "POST",
+                    "statusCode": 200,
+                    "header": {
+                        "Authorization": "Bearer eft_api_z03",
+                        "Content-Type": "application/json"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "contrato": "CT-901",
+                            "valor": 900,
+                            "parcelas": 12
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "status": "CONFIRMADO",
+                            "autorizacao": "AUTH-1122",
+                            "dataConfirmacao": "2024-07-20T17:45:00"
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Confirmacao de Pagamento",
+                            "url": "https://pagamento.exemplo.com/confirm",
+                            "method": "POST",
+                            "statusCode": 200,
+                            "header": {
+                                "Content-Type": "application/json",
+                                "x-Request-Id": "pag-5500"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "contrato": "CT-901",
+                                    "valor": 900
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "status": "CONFIRMADO",
+                                    "autorizacao": "AUTH-1122"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
