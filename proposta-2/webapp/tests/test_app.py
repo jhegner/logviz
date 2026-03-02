@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import importlib
 import sys
+import types
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -12,6 +13,8 @@ import pytest
 # ---------------------------------------------------------------------------
 # Isolate app helpers without running Streamlit
 # ---------------------------------------------------------------------------
+
+_APP_PATH = Path(__file__).parent.parent / "app.py"
 
 
 def _import_helpers():
@@ -26,23 +29,12 @@ def _import_helpers():
     st_mock.stop = MagicMock(side_effect=SystemExit)
 
     with patch.dict(sys.modules, {"streamlit": st_mock}):
-        import importlib
         if "app" in sys.modules:
             del sys.modules["app"]
-        # We only need the pure helpers — stub out the rest
-        import types
         mod = types.ModuleType("app")
-        # Import _format_json and _status_badge directly
-        exec(
-            compile(
-                open(
-                    __file__.replace("test_app.py", "../app.py")
-                ).read(),
-                "app.py",
-                "exec",
-            ),
-            mod.__dict__,
-        )
+        with open(_APP_PATH) as fh:
+            source = fh.read()
+        exec(compile(source, str(_APP_PATH), "exec"), mod.__dict__)
     return mod
 
 
