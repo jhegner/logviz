@@ -5,8 +5,8 @@ set -euo pipefail
 # Proposta 2 — Upload para S3: Meta (NDJSON) + Detail (JSON por jornada)
 #
 # Estrutura no bucket:
-#   jornadas/meta/data=YYYY-MM-DD/records.json   → crawleado pelo Glue / Athena
-#   jornadas/detail/{idJornada}.json             → download via presigned URL
+#   jornadas/meta/data=YYYY-MM-DD/records.json              → crawleado pelo Glue / Athena
+#   jornadas/detail/data=YYYY-MM-DD/{idJornada}.json        → download via presigned URL
 #
 # Bucket : bucket-logs-eventos
 # Região : us-east-1
@@ -128,6 +128,6 @@ echo "    WHERE data = '2024-06-15'"
 echo "      AND total_erros_integracao > 0;"
 echo ""
 echo "  Para baixar o detalhe de uma jornada específica:"
-  echo "    AWS CLI : aws s3 presign s3://$BUCKET/$S3_PREFIX/detail/data=YYYY-MM-DD/<idJornada>.json --expires-in $PRESIGN_EXPIRES"
-  echo "    Script  : presign_detail <idJornada> <data=YYYY-MM-DD>  (source este script e chame a função)"
+echo "    AWS CLI : aws s3 presign s3://$BUCKET/$S3_PREFIX/detail/data=YYYY-MM-DD/<idJornada>.json --expires-in $PRESIGN_EXPIRES"
+echo "    Script  : presign_detail <idJornada> <data=YYYY-MM-DD>  (source este script e chame a função)"
 echo "========================================================"
