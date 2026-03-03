@@ -19,6 +19,18 @@ A **Streamlit** web application that lets developers browse and inspect JSON det
 - Python 3.12+
 - AWS credentials configured (`~/.aws/credentials` with at least `s3:GetObject` and `s3:ListBucket`)
 
+### Python Virtual Env
+
+```bash
+python3 -m venv .venv
+
+source .venv/bin/activate # linux
+
+source .venv\Scripts\activate # windows
+
+deactivate # desativa
+```
+
 ### Install & Run
 
 ```bash
@@ -39,12 +51,12 @@ The app will open at <http://localhost:8501>.
 
 ### Environment Variables
 
-| Variable      | Required | Default            | Description                              |
-|---------------|----------|--------------------|------------------------------------------|
-| `S3_BUCKET`   | ✅ yes    | —                  | S3 bucket name                           |
-| `S3_PREFIX`   | no       | `jornadas/detail`  | Prefix inside the bucket                 |
-| `AWS_REGION`  | no       | `us-east-1`        | AWS region                               |
-| `AWS_PROFILE` | no       | `default`          | Named profile from `~/.aws/credentials` |
+| Variable      | Required | Default           | Description                             |
+| ------------- | -------- | ----------------- | --------------------------------------- |
+| `S3_BUCKET`   | ✅ yes    | —                 | S3 bucket name                          |
+| `S3_PREFIX`   | no       | `jornadas/detail` | Prefix inside the bucket                |
+| `AWS_REGION`  | no       | `us-east-1`       | AWS region                              |
+| `AWS_PROFILE` | no       | `default`         | Named profile from `~/.aws/credentials` |
 
 Copy `.env.example` to `.env` and adjust the values. You can also change all settings via the sidebar inside the app.
 

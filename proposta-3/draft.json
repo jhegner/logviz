@@ -1,0 +1,58 @@
+{
+    "_proposta": "3 — Meta + Detail Pattern com particionamento 3 níveis (ano/mes/dia)",
+    "_descricao": "Evolução da proposta 2. O meta permanece NDJSON flat crawleado pelo Glue, mas agora particionado em 3 níveis (ano/mes/dia) para otimizar S3 Lifecycle Policies e reduzir custo de scan no Athena. O arquivo de detalhe segue a mesma partição e é acessado via presigned URL.",
+    "_estrutura_s3": {
+        "meta":   "s3://bucket-logs-eventos/jornadas/meta/ano=YYYY/mes=MM/dia=DD/records.json   (NDJSON — crawleado pelo Glue)",
+        "detail": "s3://bucket-logs-eventos/jornadas/detail/ano=YYYY/mes=MM/dia=DD/{idJornada}.json  (JSON completo — acesso via presigned URL)"
+    },
+    "_particoes_athena": {
+        "meta_colunas":   ["ano", "mes", "dia"],
+        "meta_tipo":      "string em todos (compatível com Glue partition projection)",
+        "detail_nota":    "detail NÃO é crawleado — partição serve apenas para Lifecycle e organização no S3"
+    },
+    "_s3_lifecycle": {
+        "_descricao": "Regras por prefixo de ano/mes — sem precisar calcular datas exatas",
+        "detail_transitions": [
+            { "Dias": 90,  "StorageClass": "STANDARD_IA",  "Motivo": "acesso eventual após 3 meses" },
+            { "Dias": 180, "StorageClass": "GLACIER",       "Motivo": "arquivamento após 6 meses" },
+            { "Dias": 365, "StorageClass": "DEEP_ARCHIVE",  "Motivo": "retenção de longo prazo após 1 ano" }
+        ],
+        "meta_transitions": [
+            { "Dias": 180, "StorageClass": "STANDARD_IA",  "Motivo": "Athena ainda pode consultar, mas com menor frequência" },
+            { "Dias": 730, "StorageClass": "GLACIER",       "Motivo": "arquivamento após 2 anos" }
+        ],
+        "exemplo_regra_por_ano": "Prefixo 'jornadas/detail/ano=2023/' → expirar ou arquivar o ano inteiro com uma única regra"
+    },
+    "meta_record": {
+        "idJornada": "J12345",
+        "ano": "2024",
+        "mes": "06",
+        "dia": "15",
+        "dataHoraInicio": "2024-06-15T08:00:00",
+        "dataHoraFim": "2024-06-15T17:00:00",
+        "version": "1.0",
+        "idEvento": "20260615-001",
+        "canal": "Web",
+        "produto": "ProdutoX",
+        "idCliente": "550e8400-e29b-41d4-a716-446655440000",
+        "ambiente": "Prod",
+        "total_erros_servico": 0,
+        "total_erros_integracao": 0,
+        "resumo_ia": "...",
+        "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/ano=2024/mes=06/dia=15/J12345.json"
+    },
+    "_athena_queries": {
+        "dia_exato": "SELECT idJornada, canal, produto, s3_detail_path FROM jornadas_meta WHERE ano='2024' AND mes='06' AND dia='15'",
+        "mes_inteiro": "SELECT canal, COUNT(*) AS total FROM jornadas_meta WHERE ano='2024' AND mes='06' GROUP BY canal",
+        "ano_inteiro": "SELECT produto, SUM(total_erros_integracao) AS erros FROM jornadas_meta WHERE ano='2024' GROUP BY produto",
+        "range_meses": "SELECT * FROM jornadas_meta WHERE ano='2024' AND mes BETWEEN '06' AND '09'",
+        "com_erros": "SELECT idJornada, canal, total_erros_integracao, s3_detail_path FROM jornadas_meta WHERE ano='2024' AND mes='06' AND total_erros_integracao > 0"
+    },
+    "_presigned_url_exemplo": "aws s3 presign s3://bucket-logs-eventos/jornadas/detail/ano=2024/mes=06/dia=15/J12345.json --expires-in 3600",
+    "_comparativo_proposta2": {
+        "particao": "data=YYYY-MM-DD (1 nível) → ano/mes/dia (3 níveis)",
+        "lifecycle": "Regras por data exata → Regras por prefixo de ano ou mês inteiro",
+        "athena_pruning": "Filtro em 1 coluna → Filtro em 3 colunas com pruning real por mês/ano",
+        "custo_scan": "Médio → Baixo (partições mais granulares = menos dados lidos)"
+    }
+}
