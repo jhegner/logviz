@@ -233,21 +233,29 @@ with tab_browser:
 
     st.subheader("📁 1. Informe a partição")
 
-    selected_partition = st.text_input(
-        "Partição",
-        value=st.session_state.get("partition", ""),
-        placeholder="Ex.: data=2024-06-15  ou  ano=2024/mes=06/dia=15/canal=web",
-        help=(
-            "Digite o caminho da partição dentro do prefixo configurado. "
-            "Exemplo: data=2024-06-15 ou ano=2024/mes=06/dia=15."
-        ),
-    )
+    with st.form("form_partition"):
+        col_input, col_btn = st.columns([5, 1])
+        with col_input:
+            partition_input = st.text_input(
+                "Partição",
+                value=st.session_state.get("partition", ""),
+                placeholder="Ex.: data=2024-06-15  ou  ano=2024/mes=06/dia=15/canal=web",
+                help=(
+                    "Digite o caminho da partição dentro do prefixo configurado. "
+                    "Exemplo: data=2024-06-15 ou ano=2024/mes=06/dia=15."
+                ),
+                label_visibility="collapsed",
+            )
+        with col_btn:
+            submitted = st.form_submit_button("🔍 Buscar", type="primary", use_container_width=True)
 
-    if selected_partition:
-        st.session_state["partition"] = selected_partition
+    if submitted and partition_input:
+        st.session_state["partition"] = partition_input
+
+    selected_partition = st.session_state.get("partition", "")
 
     if not selected_partition:
-        st.info("Digite o caminho da partição acima para listar os arquivos.")
+        st.info("Digite o caminho da partição acima e clique em **Buscar** (ou pressione Enter).")
         st.stop()
 
     # -----------------------------------------------------------------------
@@ -278,7 +286,7 @@ with tab_browser:
 
     st.subheader("🔍 3. Conteúdo da Jornada")
 
-    if st.button("📂 Carregar JSON", type="primary"):
+    if st.button("📂 Carregar JSON", type="primary", key="btn_load_json_browser"):
         try:
             data = client.get_json(selected_partition, selected_file)
             raw = client.get_raw(selected_partition, selected_file)
@@ -419,86 +427,3 @@ with tab_query:
                     st.info("A query não retornou resultados.")
             except Exception as exc:
                 st.error(f"Erro ao executar query no Athena: {exc}")
-# ---------------------------------------------------------------------------
-# Step 1 — Choose a date partition
-# ---------------------------------------------------------------------------
-
-st.subheader("📁 1. Selecione a partição (data)")
-
-try:
-    partitions = client.list_partitions()
-except Exception as exc:
-    st.error(f"Erro ao listar partições: {exc}")
-    st.stop()
-
-if not partitions:
-    st.info("Nenhuma partição encontrada no prefixo configurado.")
-    st.stop()
-
-selected_partition = st.selectbox(
-    "Partição disponível",
-    options=partitions,
-    index=0,
-    help="Selecione o folder de data para listar os arquivos de jornada.",
-)
-
-# ---------------------------------------------------------------------------
-# Step 2 — Choose a file
-# ---------------------------------------------------------------------------
-
-st.subheader("📄 2. Selecione o arquivo de jornada")
-
-try:
-    files = client.list_files(selected_partition)
-except Exception as exc:
-    st.error(f"Erro ao listar arquivos em {selected_partition}: {exc}")
-    st.stop()
-
-if not files:
-    st.info(f"Nenhum arquivo JSON encontrado em **{selected_partition}**.")
-    st.stop()
-
-selected_file = st.selectbox(
-    "Arquivo JSON",
-    options=files,
-    help="Clique para visualizar o conteúdo do arquivo.",
-)
-
-# ---------------------------------------------------------------------------
-# Step 3 — Load and display the JSON
-# ---------------------------------------------------------------------------
-
-st.subheader("🔍 3. Conteúdo da Jornada")
-
-if st.button("📂 Carregar JSON", type="primary"):
-    try:
-        data = client.get_json(selected_partition, selected_file)
-        raw = client.get_raw(selected_partition, selected_file)
-        st.session_state["json_data"] = data
-        st.session_state["json_raw"] = raw
-        st.session_state["json_file"] = selected_file
-    except Exception as exc:
-        st.error(f"Erro ao carregar arquivo: {exc}")
-        st.stop()
-
-if (
-    "json_data" in st.session_state
-    and st.session_state.get("json_file") == selected_file
-):
-    data = st.session_state["json_data"]
-    raw = st.session_state["json_raw"]
-
-    # Download button
-    st.download_button(
-        label="⬇️ Baixar JSON",
-        data=raw,
-        file_name=selected_file,
-        mime="application/json",
-    )
-
-    # Summary metrics
-    _render_summary(data)
-
-    # Full JSON viewer
-    with st.expander("📝 JSON completo", expanded=False):
-        st.code(_format_json(data), language="json")
