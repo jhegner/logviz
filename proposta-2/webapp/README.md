@@ -87,3 +87,10 @@ s3://bucket-logs-eventos/
         └── data=YYYY-MM-DD/
             └── records.json   ← NDJSON queried by Athena
 ```
+
+## Athena and Glue Infos
+
+- Set output: lab-logviz-database
+- IAM role: AWSGlueServiceRole-logviz-labs
+- Data sources: s3://bucket-logs-eventos/jornadas/meta/
+- Set crawler: lab-logviz-meta-crawler

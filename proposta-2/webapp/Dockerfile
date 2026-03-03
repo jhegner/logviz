@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app.py s3_client.py ./
+COPY app.py s3_client.py athena_client.py ./
 
 # Streamlit configuration
 ENV STREAMLIT_SERVER_PORT=8501 \
