@@ -1,0 +1,294 @@
+{
+    "idJornada": "J12345",
+    "data": "2024-06-15",
+    "meta": {
+        "dataHoraInicio": "2024-06-15T08:00:00",
+        "dataHoraFim": "2024-06-15T17:00:00",
+        "version": "1.0",
+        "idEvento": "20260615-001",
+        "canal": "Web",
+        "produto": "ProdutoX",
+        "idCliente": "550e8400-e29b-41d4-a716-446655440000",
+        "ambiente": "Prod",
+        "resumo_ia": "Renegociação do ProdutoX iniciada às 08:00 com 4 etapas. OFERTA (08:00-10:00): Consulta preço R$149,90, validação CPF pendente, sincronização estoque 120un (PUT 204). SIMULAÇÃO (10:15-11:30): Financiamento aprovado 36x R$184,25 (taxa 1,85%, score 780, risco baixo). RESUMO (11:30-12:30): Total R$5.120 em 4 itens, 7 documentos sem pendências. EFETIVAÇÃO (12:30-14:30): Contrato CT-456 em processamento (PUT 202), pagamento confirmado AUTH-9988. Fluxo nominal sem erros críticos. Para troubleshooting verificar: tokens de autenticação, correlation-ids (123e4567...), e status de fila em validações assíncronas."
+    },
+    "etapas": [
+        {
+            "idJornada": "J12345",
+            "idEtapa": "550e8400-e29b-41d4-a716-446655440000",
+            "nome": "Oferta",
+            "dataHoraInicio": "2024-06-15T08:00:00",
+            "dataHoraFim": "2024-06-15T10:00:00",
+            "servicos": [
+                {
+                    "nome": "Serviço de Oferta",
+                    "sigla": "SOA",
+                    "siglaApp": "SOA_APP",
+                    "versaoApp": "2.1",
+                    "url": "https://api.exemplo.com/oferta",
+                    "method": "POST",
+                    "statusCode": 200,
+                    "header": {
+                        "Authorization": "Bearer token_exemplo",
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "x-Custom-Header": "ValorCustomizado",
+                        "x-correlation-id": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "param1": "valor1",
+                            "param2": "va***2"
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "responseParam1": "responseValue1",
+                            "responseParam2": "resp********e2"
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Consulta de Preço",
+                            "url": "https://api.exemplo.com/preco",
+                            "method": "GET",
+                            "statusCode": 200,
+                            "header": {
+                                "Authorization": "Bearer preco_token",
+                                "Accept": "application/json"
+                            },
+                            "httpRequest": {
+                                "query": {
+                                    "produto": "ProdutoX",
+                                    "regiao": "sudeste"
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "preco": 149.90,
+                                    "moeda": "BRL"
+                                }
+                            }
+                        },
+                        {
+                            "nome": "Validação de CPF",
+                            "url": "https://api.exemplo.com/cpf/valida",
+                            "method": "POST",
+                            "statusCode": 202,
+                            "header": {
+                                "Content-Type": "application/json",
+                                "x-Request-Id": "req-7890"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "cpf": "12345678909",
+                                    "nome": "João da Silva"
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "status": "PENDENTE",
+                                    "detalhes": "Consulta enviada para fila"
+                                }
+                            }
+                        },
+                        {
+                            "nome": "Sincronização de Estoque",
+                            "url": "https://erp.exemplo.com/estoque/sync",
+                            "method": "PUT",
+                            "statusCode": 204,
+                            "header": {
+                                "Authorization": "Bearer estoque_token",
+                                "Content-Type": "application/json"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "produto": "ProdutoX",
+                                    "quantidade": 120
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {}
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "idJornada": "J12345",
+            "idEtapa": "d9f8c7b1-4a6e-4e1b-b3c9-2ac820b7f123",
+            "nome": "Simulacao",
+            "dataHoraInicio": "2024-06-15T10:15:00",
+            "dataHoraFim": "2024-06-15T11:30:00",
+            "servicos": [
+                {
+                    "nome": "Servico de Simulacao",
+                    "sigla": "SSM",
+                    "siglaApp": "SIM_APP",
+                    "versaoApp": "1.3",
+                    "url": "https://api.exemplo.com/simulacao",
+                    "method": "POST",
+                    "statusCode": 200,
+                    "header": {
+                        "Authorization": "Bearer simulacao_token",
+                        "Content-Type": "application/json"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "cenario": "padrao",
+                            "valor": 5000,
+                            "prazo": 36
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "risco": "baixo",
+                            "score": 780
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Simulacao Financiamento",
+                            "url": "https://financiamento.exemplo.com/simular",
+                            "method": "POST",
+                            "statusCode": 201,
+                            "header": {
+                                "Content-Type": "application/json",
+                                "x-Request-Id": "sim-5671"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "produto": "ProdutoX",
+                                    "valorSolicitado": 5000,
+                                    "prazo": 36
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "valorParcela": 184.25,
+                                    "taxaJuros": 1.85
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "idJornada": "J12345",
+            "idEtapa": "a3b4c5d6-e7f8-9012-3456-7890fedcba98",
+            "nome": "Resumo",
+            "dataHoraInicio": "2024-06-15T11:30:00",
+            "dataHoraFim": "2024-06-15T12:30:00",
+            "servicos": [
+                {
+                    "nome": "Servico de Resumo",
+                    "sigla": "SRES",
+                    "siglaApp": "RES_APP",
+                    "versaoApp": "1.0",
+                    "url": "https://api.exemplo.com/resumo",
+                    "method": "PATCH",
+                    "statusCode": 200,
+                    "header": {
+                        "Accept": "application/json"
+                    },
+                    "httpRequest": {
+                        "query": {
+                            "transacaoId": "TX-20240615-005"
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "total": 5120,
+                            "itens": 4
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Resumo de Documentos",
+                            "url": "https://docmanager.exemplo.com/resumo",
+                            "method": "GET",
+                            "statusCode": 200,
+                            "header": {
+                                "Accept": "application/json",
+                                "x-Correlation-Id": "resumo-1122"
+                            },
+                            "httpRequest": {
+                                "query": {
+                                    "cliente": "123456",
+                                    "periodo": "2024-06"
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "documentos": 7,
+                                    "pendencias": 0
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "idJornada": "J12345",
+            "idEtapa": "f0e1d2c3-b4a5-6789-0123-456789abcdef",
+            "nome": "Efetivacao",
+            "dataHoraInicio": "2024-06-15T12:30:00",
+            "dataHoraFim": "2024-06-15T14:30:00",
+            "servicos": [
+                {
+                    "nome": "Servico de Efetivacao",
+                    "sigla": "SEF",
+                    "siglaApp": "EFT_APP",
+                    "versaoApp": "3.0",
+                    "url": "https://api.exemplo.com/efetivacao",
+                    "method": "POST",
+                    "statusCode": 202,
+                    "header": {
+                        "Authorization": "Bearer efetivacao_token",
+                        "Content-Type": "application/json"
+                    },
+                    "httpRequest": {
+                        "body": {
+                            "contrato": "CT-456",
+                            "valor": 5120,
+                            "parcelas": 36
+                        }
+                    },
+                    "httpResponse": {
+                        "body": {
+                            "status": "EM_PROCESSAMENTO",
+                            "previsao": "2024-06-15T15:00:00"
+                        }
+                    },
+                    "integracoes": [
+                        {
+                            "nome": "Confirmacao de Pagamento",
+                            "url": "https://pagamento.exemplo.com/confirm",
+                            "method": "POST",
+                            "statusCode": 200,
+                            "header": {
+                                "Content-Type": "application/json",
+                                "x-Request-Id": "pag-3344"
+                            },
+                            "httpRequest": {
+                                "body": {
+                                    "contrato": "CT-456",
+                                    "valor": 5120
+                                }
+                            },
+                            "httpResponse": {
+                                "body": {
+                                    "status": "CONFIRMADO",
+                                    "autorizacao": "AUTH-9988"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
