@@ -1,12 +1,1 @@
-{
-    "idJornada": "J12347",
-    "dataHoraInicio": "2024-07-20T14:00:00",
-    "dataHoraFim": "2024-07-20T18:00:00",
-    "version": "1.2",
-    "idEvento": "20260720-001",
-    "canal": "API",
-    "produto": "ProdutoZ",
-    "idCliente": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
-    "ambiente": "Staging",
-    "resumo_ia": "Teste de integração do ProdutoZ em ambiente Staging com 3 etapas. OFERTA (14:00-15:00): Preço R$89,90, estoque sincronizado 50un (PUT 204). SIMULAÇÃO (15:00-16:00): Financiamento 12x R$82,10 aprovado (taxa 2,10%, score 650, risco médio). EFETIVAÇÃO (16:00-18:00): Contrato CT-901 confirmado, pagamento AUTH-1122 aprovado. Fluxo nominal sem erros."
-}
+{"idJornada": "J12347", "dataHoraInicio": "2024-07-20T14:00:00", "dataHoraFim": "2024-07-20T18:00:00", "version": "1.2", "idEvento": "20260720-001", "canal": "API", "produto": "ProdutoZ", "idCliente": "b2c3d4e5-f6a7-8901-bcde-f23456789012", "ambiente": "Staging", "resumo_ia": "Teste de integração do ProdutoZ em ambiente Staging com 3 etapas. OFERTA (14:00-15:00): Preço R$89,90, estoque sincronizado 50un (PUT 204). SIMULAÇÃO (15:00-16:00): Financiamento 12x R$82,10 aprovado (taxa 2,10%, score 650, risco médio). EFETIVAÇÃO (16:00-18:00): Contrato CT-901 confirmado, pagamento AUTH-1122 aprovado. Fluxo nominal sem erros."}
