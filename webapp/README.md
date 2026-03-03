@@ -100,6 +100,33 @@ s3://bucket-logs-eventos/
             └── records.json   ← NDJSON queried by Athena
 ```
 
+> [!IMPORTANT]
+> **`records.json` must be NDJSON** — one JSON object per line, no arrays, no indentation.
+> Athena's `JsonSerDe` reads exactly one record per line. Pretty-printed or array-formatted files will cause:
+> `HIVE_CURSOR_ERROR: Failed to read file at s3://...`
+
+**✅ Correct — NDJSON:**
+
+```ndjson
+{"idJornada": "J12345", "canal": "Web", "total_erros_integracao": 0, "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/data=2024-06-15/J12345.json"}
+{"idJornada": "J12346", "canal": "Mobile", "total_erros_integracao": 1, "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/data=2024-06-15/J12346.json"}
+```
+
+**❌ Incorrect — JSON array or pretty-printed multi-line JSON:**
+
+```json
+[
+  { "idJornada": "J12345", "canal": "Web" },
+  { "idJornada": "J12346", "canal": "Mobile" }
+]
+```
+
+After uploading corrected files, run in Athena:
+
+```sql
+MSCK REPAIR TABLE "lab-logviz-database"."meta";
+```
+
 ## Athena and Glue Infos
 
 - Set output: lab-logviz-database

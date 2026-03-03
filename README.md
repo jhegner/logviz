@@ -315,7 +315,79 @@ LIMIT 10;
 
 ---
 
-## 📊 Exemplos de Queries (Athena SQL)
+## � Formato dos Arquivos: NDJSON (obrigatório para o Athena)
+
+> [!IMPORTANT]
+> Os arquivos `records.json` gravados no prefixo `meta/` **devem** estar no formato **NDJSON (Newline-Delimited JSON)** — um objeto JSON por linha, sem arrays e sem indentação. O Athena usa o `JsonSerDe` (`org.openx.data.jsonserde.JsonSerDe`), que lê **exatamente uma linha por registro**. Arquivos formatados como JSON arrays ou JSON multi-linha causam `HIVE_CURSOR_ERROR: Failed to read file`.
+
+### ✅ Formato correto — NDJSON
+
+Cada linha é um JSON completo e independente:
+
+```ndjson
+{"idJornada": "J12345", "canal": "Web", "produto": "ProdutoX", "total_erros_integracao": 0, "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/ano=2024/mes=06/dia=15/J12345.json"}
+{"idJornada": "J12346", "canal": "Mobile", "produto": "ProdutoY", "total_erros_integracao": 1, "s3_detail_path": "s3://bucket-logs-eventos/jornadas/detail/ano=2024/mes=06/dia=15/J12346.json"}
+```
+
+### ❌ Formato incorreto — JSON array
+
+```json
+[
+  {"idJornada": "J12345", "canal": "Web"},
+  {"idJornada": "J12346", "canal": "Mobile"}
+]
+```
+
+### ❌ Formato incorreto — JSON multi-linha (pretty-printed)
+
+```json
+{
+  "idJornada": "J12345",
+  "canal": "Web"
+}
+{
+  "idJornada": "J12346",
+  "canal": "Mobile"
+}
+```
+
+### 🔧 Conversão para NDJSON (Python)
+
+```python
+import json
+
+decoder = json.JSONDecoder()
+path = "records.json"
+
+with open(path, "r", encoding="utf-8") as f:
+    text = f.read().strip()
+
+records, idx = [], 0
+while idx < len(text):
+    chunk = text[idx:].lstrip()
+    if not chunk:
+        break
+    obj, end = decoder.raw_decode(chunk)
+    records.append(obj)
+    idx += len(text[idx:]) - len(chunk) + end
+
+with open(path, "w", encoding="utf-8", newline="\n") as f:
+    f.write("\n".join(json.dumps(r, ensure_ascii=False) for r in records) + "\n")
+```
+
+### 🛠️ Após corrigir os arquivos no S3
+
+```sql
+-- Forçar re-descoberta das partições
+MSCK REPAIR TABLE "lab-logviz-database"."meta";
+
+-- Ou, com Partition Projection habilitado, basta reexecutar a query
+SELECT * FROM "lab-logviz-database"."meta" WHERE ano='2024' LIMIT 10;
+```
+
+---
+
+## �📊 Exemplos de Queries (Athena SQL)
 
 ### 1. 🔴 Buscar Jornadas com Erro
 
@@ -515,29 +587,29 @@ GROUP BY 1, 2, 3, 4;
 
 ### Estimativa para **1 milhão de eventos/mês** (~33k eventos/dia)
 
-| Componente | Solução 1 (SQS Std) | Solução 2 (SQS FIFO) | Solução 3 (Kinesis) | Solução 4 (Sem Glue) |
-|------------|---------------------|----------------------|---------------------|----------------------|
-| **Fila de Mensagens** | $0.40 | $0.50 | $25.00 (1 shard) | $0.40 |
-| **Lambda** | $5.00 | $5.00 | - | $5.00 |
-| **S3 Storage (1TB)** | $23.00 | $23.00 | $23.00 | $23.00 |
-| **Glue Crawler** | $0.44 | $0.44 | $0.44 | **$0.00** 🎯 |
-| **Athena Queries (5TB scan)** | $25.00 | $25.00 | $25.00 | $25.00 |
-| **QuickSight** | $24.00 | $24.00 | $24.00 | $24.00 |
-| **Data Transfer** | $2.00 | $2.00 | $5.00 | $2.00 |
-| **TOTAL/MÊS** | **~$79.84** 💚 | **~$79.94** | **~$102.44** | **~$79.40** 🏆 |
+| Componente                    | Solução 1 (SQS Std) | Solução 2 (SQS FIFO) | Solução 3 (Kinesis) | Solução 4 (Sem Glue) |
+| ----------------------------- | ------------------- | -------------------- | ------------------- | -------------------- |
+| **Fila de Mensagens**         | $0.40               | $0.50                | $25.00 (1 shard)    | $0.40                |
+| **Lambda**                    | $5.00               | $5.00                | -                   | $5.00                |
+| **S3 Storage (1TB)**          | $23.00              | $23.00               | $23.00              | $23.00               |
+| **Glue Crawler**              | $0.44               | $0.44                | $0.44               | **$0.00** 🎯          |
+| **Athena Queries (5TB scan)** | $25.00              | $25.00               | $25.00              | $25.00               |
+| **QuickSight**                | $24.00              | $24.00               | $24.00              | $24.00               |
+| **Data Transfer**             | $2.00               | $2.00                | $5.00               | $2.00                |
+| **TOTAL/MÊS**                 | **~$79.84** 💚       | **~$79.94**          | **~$102.44**        | **~$79.40** 🏆        |
 
 ### Estimativa para **10 milhões de eventos/mês** (~333k eventos/dia)
 
-| Componente | Solução 1 (SQS Std) | Solução 2 (SQS FIFO) | Solução 3 (Kinesis) | Solução 4 (Sem Glue) |
-|------------|---------------------|----------------------|---------------------|----------------------|
-| **Fila de Mensagens** | $4.00 | $5.00 | $100.00 (4 shards) | $4.00 |
-| **Lambda** | $50.00 | $50.00 | - | $50.00 |
-| **S3 Storage (10TB)** | $230.00 | $230.00 | $230.00 | $230.00 |
-| **Glue Crawler** | $4.40 | $4.40 | $4.40 | **$0.00** 🎯 |
-| **Athena Queries (50TB scan)** | $250.00 | $250.00 | $250.00 | $250.00 |
-| **QuickSight** | $24.00 | $24.00 | $24.00 | $24.00 |
-| **Data Transfer** | $20.00 | $20.00 | $50.00 | $20.00 |
-| **TOTAL/MÊS** | **~$582.40** 💚 | **~$583.40** | **~$658.40** | **~$578.00** 🏆 |
+| Componente                     | Solução 1 (SQS Std) | Solução 2 (SQS FIFO) | Solução 3 (Kinesis) | Solução 4 (Sem Glue) |
+| ------------------------------ | ------------------- | -------------------- | ------------------- | -------------------- |
+| **Fila de Mensagens**          | $4.00               | $5.00                | $100.00 (4 shards)  | $4.00                |
+| **Lambda**                     | $50.00              | $50.00               | -                   | $50.00               |
+| **S3 Storage (10TB)**          | $230.00             | $230.00              | $230.00             | $230.00              |
+| **Glue Crawler**               | $4.40               | $4.40                | $4.40               | **$0.00** 🎯          |
+| **Athena Queries (50TB scan)** | $250.00             | $250.00              | $250.00             | $250.00              |
+| **QuickSight**                 | $24.00              | $24.00               | $24.00              | $24.00               |
+| **Data Transfer**              | $20.00              | $20.00               | $50.00              | $20.00               |
+| **TOTAL/MÊS**                  | **~$582.40** 💚      | **~$583.40**         | **~$658.40**        | **~$578.00** 🏆       |
 
 ### 💡 Otimizações de Custo
 
@@ -581,13 +653,13 @@ Dias 365+:    Deep Archive        ($1/TB)     → -96% custo
 
 ### 🟢 Solução 1: SQS Standard + Lambda + S3
 
-| Prós ✅ | Contras ❌ |
-|---------|-----------|
-| Custo mais baixo | Sem garantia de ordem |
-| Configuração simples | Possibilidade de duplicação |
-| Auto-scaling nativo | Latência variável (1-5 seg) |
-| DLQ para retry | Limite de 256KB por mensagem |
-| Sem gerenciamento de infra | - |
+| Prós ✅                     | Contras ❌                    |
+| -------------------------- | ---------------------------- |
+| Custo mais baixo           | Sem garantia de ordem        |
+| Configuração simples       | Possibilidade de duplicação  |
+| Auto-scaling nativo        | Latência variável (1-5 seg)  |
+| DLQ para retry             | Limite de 256KB por mensagem |
+| Sem gerenciamento de infra | -                            |
 
 **💡 Use quando:**
 
@@ -599,12 +671,12 @@ Dias 365+:    Deep Archive        ($1/TB)     → -96% custo
 
 ### 🟡 Solução 2: SQS FIFO + Lambda + S3
 
-| Prós ✅ | Contras ❌ |
-|---------|-----------|
-| Ordem garantida por grupo | Throughput limitado (300/seg) |
-| Deduplicação automática | Custo 25% maior |
+| Prós ✅                        | Contras ❌                      |
+| ----------------------------- | ------------------------------ |
+| Ordem garantida por grupo     | Throughput limitado (300/seg)  |
+| Deduplicação automática       | Custo 25% maior                |
 | Todas as vantagens do SQS Std | Complexidade do MessageGroupId |
-| - | Latência ligeiramente maior |
+| -                             | Latência ligeiramente maior    |
 
 **💡 Use quando:**
 
@@ -616,13 +688,13 @@ Dias 365+:    Deep Archive        ($1/TB)     → -96% custo
 
 ### 🔵 Solução 3: Kinesis Firehose + S3
 
-| Prós ✅ | Contras ❌ |
-|---------|-----------|
-| Streaming direto (sem Lambda) | Custo 10x maior que SQS |
-| Transformação nativa (Parquet) | Gerenciamento de shards |
-| Múltiplos consumidores | Over-engineering para logs |
-| Replay de eventos (até 365d) | Precisa dimensionar capacidade |
-| Baixa latência (< 1 seg) | - |
+| Prós ✅                         | Contras ❌                      |
+| ------------------------------ | ------------------------------ |
+| Streaming direto (sem Lambda)  | Custo 10x maior que SQS        |
+| Transformação nativa (Parquet) | Gerenciamento de shards        |
+| Múltiplos consumidores         | Over-engineering para logs     |
+| Replay de eventos (até 365d)   | Precisa dimensionar capacidade |
+| Baixa latência (< 1 seg)       | -                              |
 
 **💡 Use quando:**
 
@@ -635,14 +707,14 @@ Dias 365+:    Deep Archive        ($1/TB)     → -96% custo
 
 ### 🟢 Solução 4: SQS Standard + Lambda + S3 (Sem Glue)
 
-| Prós ✅ | Contras ❌ |
-|---------|-----------|
-| **Custo mais baixo de todas** | Schema manual (DDL) |
-| Todas as vantagens do SQS Std | Mudanças de schema = código |
-| Partition Projection automático | Sem UI visual do schema |
-| Setup instantâneo (1 query) | Precisa conhecer SQL DDL |
-| Schema versionado no Git | - |
-| Zero dependências extras | - |
+| Prós ✅                          | Contras ❌                   |
+| ------------------------------- | --------------------------- |
+| **Custo mais baixo de todas**   | Schema manual (DDL)         |
+| Todas as vantagens do SQS Std   | Mudanças de schema = código |
+| Partition Projection automático | Sem UI visual do schema     |
+| Setup instantâneo (1 query)     | Precisa conhecer SQL DDL    |
+| Schema versionado no Git        | -                           |
+| Zero dependências extras        | -                           |
 
 **💡 Use quando:**
 
