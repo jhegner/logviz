@@ -2,32 +2,54 @@
     "_proposta": "3 — Meta + Detail Pattern com particionamento 3 níveis (ano/mes/dia)",
     "_descricao": "Evolução da proposta 2. O meta permanece NDJSON flat crawleado pelo Glue, mas agora particionado em 3 níveis (ano/mes/dia) para otimizar S3 Lifecycle Policies e reduzir custo de scan no Athena. O arquivo de detalhe segue a mesma partição e é acessado via presigned URL.",
     "_estrutura_s3": {
-        "meta":   "s3://bucket-logs-eventos/jornadas/meta/ano=YYYY/mes=MM/dia=DD/records.json   (NDJSON — crawleado pelo Glue)",
+        "meta": "s3://bucket-logs-eventos/jornadas/meta/ano=YYYY/mes=MM/dia=DD/records.json   (NDJSON — crawleado pelo Glue)",
         "detail": "s3://bucket-logs-eventos/jornadas/detail/ano=YYYY/mes=MM/dia=DD/{idJornada}.json  (JSON completo — acesso via presigned URL)"
     },
     "_particoes_athena": {
-        "meta_colunas":   ["ano", "mes", "dia"],
-        "meta_tipo":      "string em todos (compatível com Glue partition projection)",
-        "detail_nota":    "detail NÃO é crawleado — partição serve apenas para Lifecycle e organização no S3"
+        "meta_colunas": [
+            "ano",
+            "mes",
+            "dia"
+        ],
+        "meta_tipo": "string em todos (compatível com Glue partition projection)",
+        "detail_nota": "detail NÃO é crawleado — partição serve apenas para Lifecycle e organização no S3"
     },
     "_s3_lifecycle": {
         "_descricao": "Regras por prefixo de ano/mes — sem precisar calcular datas exatas",
         "detail_transitions": [
-            { "Dias": 90,  "StorageClass": "STANDARD_IA",  "Motivo": "acesso eventual após 3 meses" },
-            { "Dias": 180, "StorageClass": "GLACIER",       "Motivo": "arquivamento após 6 meses" },
-            { "Dias": 365, "StorageClass": "DEEP_ARCHIVE",  "Motivo": "retenção de longo prazo após 1 ano" }
+            {
+                "Dias": 90,
+                "StorageClass": "STANDARD_IA",
+                "Motivo": "acesso eventual após 3 meses"
+            },
+            {
+                "Dias": 180,
+                "StorageClass": "GLACIER",
+                "Motivo": "arquivamento após 6 meses"
+            },
+            {
+                "Dias": 365,
+                "StorageClass": "DEEP_ARCHIVE",
+                "Motivo": "retenção de longo prazo após 1 ano"
+            }
         ],
         "meta_transitions": [
-            { "Dias": 180, "StorageClass": "STANDARD_IA",  "Motivo": "Athena ainda pode consultar, mas com menor frequência" },
-            { "Dias": 730, "StorageClass": "GLACIER",       "Motivo": "arquivamento após 2 anos" }
+            {
+                "Dias": 180,
+                "StorageClass": "STANDARD_IA",
+                "Motivo": "Athena ainda pode consultar, mas com menor frequência"
+            },
+            {
+                "Dias": 730,
+                "StorageClass": "GLACIER",
+                "Motivo": "arquivamento após 2 anos"
+            }
         ],
         "exemplo_regra_por_ano": "Prefixo 'jornadas/detail/ano=2023/' → expirar ou arquivar o ano inteiro com uma única regra"
     },
+    "_meta_record_nota": "ano/mes/dia são omitidos do corpo do registro — o Glue/Athena os injeta automaticamente como colunas de partição a partir do caminho S3 (ano=YYYY/mes=MM/dia=DD). Incluí-los causaria HIVE_INVALID_METADATA: duplicate columns.",
     "meta_record": {
         "idJornada": "J12345",
-        "ano": "2024",
-        "mes": "06",
-        "dia": "15",
         "dataHoraInicio": "2024-06-15T08:00:00",
         "dataHoraFim": "2024-06-15T17:00:00",
         "version": "1.0",

@@ -1,8 +1,5 @@
 {
     "idJornada": "J12345",
-    "ano": "2024",
-    "mes": "06",
-    "dia": "15",
     "dataHoraInicio": "2024-06-15T08:00:00",
     "dataHoraFim": "2024-06-15T17:00:00",
     "version": "1.0",
@@ -18,9 +15,6 @@
 }
 {
     "idJornada": "J12346",
-    "ano": "2024",
-    "mes": "06",
-    "dia": "15",
     "dataHoraInicio": "2024-06-15T09:00:00",
     "dataHoraFim": "2024-06-15T16:00:00",
     "version": "1.1",

@@ -106,3 +106,4 @@ s3://bucket-logs-eventos/
 - IAM role: AWSGlueServiceRole-logviz-labs
 - Data sources: s3://bucket-logs-eventos/jornadas/meta/
 - Set crawler: lab-logviz-meta-crawler
+- Athena Result Bucket: athena-results-labs
