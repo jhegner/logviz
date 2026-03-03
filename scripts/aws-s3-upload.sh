@@ -21,7 +21,7 @@ set -euo pipefail
 BUCKET="bucket-logs-eventos"
 REGION="us-east-1"
 S3_PREFIX="jornadas"
-LOCAL_DIR="$(cd "$(dirname "$0")/.." && pwd)/jornadas"
+LOCAL_DIR="$(cd "$(dirname "$0")/.." && pwd)/proposta-3/jornadas"
 
 AWS_PROFILE="${AWS_PROFILE:-default}"
 
